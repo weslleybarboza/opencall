@@ -1,0 +1,42 @@
+{
+    "pi": {
+        "pi_fullname": "Alys Wright",
+        "pi_country": "Canada"
+    },
+    "tech_lead": {
+        "tech_lead_fullname": "Ida Mullins",
+        "tech_lead_country": "Portugal"
+    },
+    "co_pis": [
+        {
+            "co_pi_fullname": "Bailey David",
+            "co_pi_country": "Canada",
+            "is_student": false
+        },
+        {
+            "co_pi_fullname": "Silas Stein",
+            "co_pi_country": "Canada",
+            "is_student": false
+        },
+        {
+            "co_pi_fullname": "Howard Koch",
+            "co_pi_country": "Canada",
+            "is_student": false
+        },
+        {
+            "co_pi_fullname": "Kabir Charles",
+            "co_pi_country": "Canada",
+            "is_student": false
+        },
+        {
+            "co_pi_fullname": "Duncan Holder",
+            "co_pi_country": "Canada",
+            "is_student": false
+        },
+        {
+            "co_pi_fullname": "Imran Rubio",
+            "co_pi_country": "Canada",
+            "is_student": false
+        }
+    ]
+}
