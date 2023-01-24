@@ -1,5 +1,5 @@
-# opencall
-Opencall repo
+# open all
+Open all repo
 
 Data warehouse
 - Developed using PDI 9.1
