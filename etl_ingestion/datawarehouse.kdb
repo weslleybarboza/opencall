@@ -1,12 +1,12 @@
   <connection>
     <name>datawarehouse</name>
-    <server>opencallcase.postgres.database.azure.com</server>
+    <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
     <database>postgres</database>
     <port>5432</port>
-    <username>opencall@opencallcase</username>
-    <password>Encrypted 2be98afc86aa7b08da710a065c6c2fedb</password>
+    <username>postgres</username>
+    <password>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>

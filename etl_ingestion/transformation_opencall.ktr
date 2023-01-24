@@ -428,7 +428,7 @@
     <created_user>-</created_user>
     <created_date>2023/01/22 14:47:19.682</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2023/01/22 16:00:57.393</modified_date>
+    <modified_date>2023/01/24 21:14:41.031</modified_date>
     <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
@@ -436,13 +436,13 @@
   </notepads>
   <connection>
     <name>datawarehouse</name>
-    <server>opencallcase.postgres.database.azure.com</server>
+    <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
     <database>postgres</database>
     <port>5432</port>
-    <username>opencall@opencallcase</username>
-    <password>Encrypted 2be98afc86aa7b08da710a065c6c2fedb</password>
+    <username>postgres</username>
+    <password>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -522,8 +522,73 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Dimension reviewer3</from>
+      <to>remove filds</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>remove filds</from>
+      <to>Reviewer score</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Reviewer score</from>
+      <to>fact score</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>remove filds</from>
+      <to>remove filds 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>remove filds 2</from>
+      <to>JSON pi and tech li</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>String operations</from>
       <to>Dimension proposal</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>JSON pi and tech li</from>
+      <to>JSON input co-invest</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>JSON input co-invest</from>
+      <to>remove filds 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>remove filds 3</from>
+      <to>Reviewer score 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Reviewer score 2</from>
+      <to>Memory group by</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Memory group by</from>
+      <to>Dimension country team</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dimension country team</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>String operations 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>String operations 2</from>
+      <to>fact team</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -642,6 +707,63 @@
     </GUI>
   </step>
   <step>
+    <name>Dimension country team</name>
+    <type>DimensionLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <schema>public</schema>
+    <table>dim_country</table>
+    <connection>datawarehouse</connection>
+    <commit>100</commit>
+    <update>Y</update>
+    <fields>
+      <key>
+        <name>country</name>
+        <lookup>country</lookup>
+      </key>
+      <date>
+        <name/>
+        <from>date_from</from>
+        <to>date_to</to>
+      </date>
+      <return>
+        <name>id_dim_country</name>
+        <rename/>
+        <creation_method>tablemax</creation_method>
+        <use_autoinc>N</use_autoinc>
+        <version>version</version>
+      </return>
+    </fields>
+    <sequence/>
+    <min_year>1900</min_year>
+    <max_year>2199</max_year>
+    <cache_size>5000</cache_size>
+    <preload_cache>N</preload_cache>
+    <use_start_date_alternative>N</use_start_date_alternative>
+    <start_date_alternative>none</start_date_alternative>
+    <start_date_field_name/>
+    <useBatch>N</useBatch>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Dimension proposal</name>
     <type>DimensionLookup</type>
     <description/>
@@ -670,6 +792,16 @@
       <field>
         <name>proposal_title</name>
         <lookup>proposal_title</lookup>
+        <update>Update</update>
+      </field>
+      <field>
+        <name>total_hrs_requested</name>
+        <lookup>total_hrs_requested</lookup>
+        <update>Update</update>
+      </field>
+      <field>
+        <name>total_hrs_recommended</name>
+        <lookup>total_hrs_recommended</lookup>
         <update>Update</update>
       </field>
       <return>
@@ -821,7 +953,7 @@
     <name>Dimension reviewer3</name>
     <type>DimensionLookup</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -871,6 +1003,556 @@
     <GUI>
       <xloc>1152</xloc>
       <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>JSON input co-invest</name>
+    <type>JsonInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <include>N</include>
+    <include_field/>
+    <rownum>N</rownum>
+    <addresultfile>N</addresultfile>
+    <readurl>N</readurl>
+    <removeSourceField>N</removeSourceField>
+    <IsIgnoreEmptyFile>N</IsIgnoreEmptyFile>
+    <doNotFailIfNoFile>Y</doNotFailIfNoFile>
+    <ignoreMissingPath>Y</ignoreMissingPath>
+    <defaultPathLeafToNull>Y</defaultPathLeafToNull>
+    <rownum_field/>
+    <file>
+      <name/>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>N</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field>
+        <name>co_pi_fullname</name>
+        <path>$[*].co_pi_fullname</path>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>co_pi_country</name>
+        <path>$[*].co_pi_country</path>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>is_student</name>
+        <path>$[*].is_student</path>
+        <type>Boolean</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+    </fields>
+    <limit>0</limit>
+    <IsInFields>Y</IsInFields>
+    <IsAFile>N</IsAFile>
+    <valueField>co_pis</valueField>
+    <shortFileFieldName/>
+    <pathFieldName/>
+    <hiddenFieldName/>
+    <lastModificationTimeFieldName/>
+    <uriNameFieldName/>
+    <rootUriNameFieldName/>
+    <extensionFieldName/>
+    <sizeFieldName/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>800</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>JSON pi and tech li</name>
+    <type>JsonInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <include>N</include>
+    <include_field/>
+    <rownum>N</rownum>
+    <addresultfile>N</addresultfile>
+    <readurl>N</readurl>
+    <removeSourceField>N</removeSourceField>
+    <IsIgnoreEmptyFile>N</IsIgnoreEmptyFile>
+    <doNotFailIfNoFile>Y</doNotFailIfNoFile>
+    <ignoreMissingPath>Y</ignoreMissingPath>
+    <defaultPathLeafToNull>Y</defaultPathLeafToNull>
+    <rownum_field/>
+    <file>
+      <name/>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>N</file_required>
+      <include_subfolders>N</include_subfolders>
+    </file>
+    <fields>
+      <field>
+        <name>pi_fullname</name>
+        <path>$.pi.pi_fullname</path>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>pi_country</name>
+        <path>$.pi.pi_country</path>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>tech_lead_fullname</name>
+        <path>$.tech_lead.tech_lead_fullname</path>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>tech_lead_country</name>
+        <path>$.tech_lead.tech_lead_country</path>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>co_pis</name>
+        <path>$.co_pis</path>
+        <type>None</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+    </fields>
+    <limit>0</limit>
+    <IsInFields>Y</IsInFields>
+    <IsAFile>N</IsAFile>
+    <valueField>investigators</valueField>
+    <shortFileFieldName/>
+    <pathFieldName/>
+    <hiddenFieldName/>
+    <lastModificationTimeFieldName/>
+    <uriNameFieldName/>
+    <rootUriNameFieldName/>
+    <extensionFieldName/>
+    <sizeFieldName/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>976</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Memory group by</name>
+    <type>MemoryGroupBy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <give_back_row>N</give_back_row>
+    <group>
+      <field>
+        <name>id_dim_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_country_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_observation_band</name>
+      </field>
+      <field>
+        <name>role</name>
+      </field>
+      <field>
+        <name>fullname</name>
+      </field>
+      <field>
+        <name>country</name>
+      </field>
+    </group>
+    <fields>
+      </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>320</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Reviewer score</name>
+    <type>Normaliser</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <typefield>reviewer</typefield>
+    <fields>
+      <field>
+        <name>reviewer1_score</name>
+        <value>Reviewer 1</value>
+        <norm>score</norm>
+      </field>
+      <field>
+        <name>id_dim_reviewer1</name>
+        <value>Reviewer 1</value>
+        <norm>id_dim_reviewer</norm>
+      </field>
+      <field>
+        <name>reviewer2_score</name>
+        <value>Reviewer 2</value>
+        <norm>score</norm>
+      </field>
+      <field>
+        <name>id_dim_reviewer2</name>
+        <value>Reviewer 2</value>
+        <norm>id_dim_reviewer</norm>
+      </field>
+      <field>
+        <name>reviewer3_score</name>
+        <value>Reviewer 3</value>
+        <norm>score</norm>
+      </field>
+      <field>
+        <name>id_dim_reviewer3</name>
+        <value>Reviewer 3</value>
+        <norm>id_dim_reviewer</norm>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>976</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Reviewer score 2</name>
+    <type>Normaliser</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <typefield>role</typefield>
+    <fields>
+      <field>
+        <name>pi_fullname</name>
+        <value>Primary Investigator</value>
+        <norm>fullname</norm>
+      </field>
+      <field>
+        <name>pi_country</name>
+        <value>Primary Investigator</value>
+        <norm>country</norm>
+      </field>
+      <field>
+        <name>tech_lead_fullname</name>
+        <value>Tech Lead</value>
+        <norm>fullname</norm>
+      </field>
+      <field>
+        <name>tech_lead_country</name>
+        <value>Tech Lead</value>
+        <norm>country</norm>
+      </field>
+      <field>
+        <name>co_pi_fullname</name>
+        <value>Co-Investigator</value>
+        <norm>fullname</norm>
+      </field>
+      <field>
+        <name>co_pi_country</name>
+        <value>Co-Investigator</value>
+        <norm>country</norm>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>480</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_dim_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_country_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_observation_band</name>
+      </field>
+      <field>
+        <name>role</name>
+      </field>
+      <field>
+        <name>fullname</name>
+      </field>
+      <field>
+        <name>country</name>
+      </field>
+      <field>
+        <name>id_dim_country</name>
+        <rename>id_dim_country_team</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>464</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>String operations</name>
+    <type>StringOperations</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>proposal_id</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>proposal_title</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>country</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>observation_band</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>reviewer1</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>reviewer2</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+      <field>
+        <in_stream_name>reviewer3</in_stream_name>
+        <out_stream_name/>
+        <trim_type>both</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>N</init_cap>
+        <mask_xml>None</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>320</xloc>
+      <yloc>48</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -961,8 +1643,305 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>928</xloc>
+      <xloc>672</xloc>
       <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>fact score</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>datawarehouse</connection>
+    <schema>public</schema>
+    <table>fact_score</table>
+    <commit>1000</commit>
+    <truncate>Y</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>id_dim_proposal</column_name>
+        <stream_name>id_dim_proposal</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_country</column_name>
+        <stream_name>id_dim_country</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_observation_band</column_name>
+        <stream_name>id_dim_observation_band</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_reviewer</column_name>
+        <stream_name>id_dim_reviewer</stream_name>
+      </field>
+      <field>
+        <column_name>reviewer</column_name>
+        <stream_name>reviewer</stream_name>
+      </field>
+      <field>
+        <column_name>score</column_name>
+        <stream_name>score</stream_name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>672</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>fact team</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>datawarehouse</connection>
+    <schema>public</schema>
+    <table>fact_team</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>role</column_name>
+        <stream_name>role</stream_name>
+      </field>
+      <field>
+        <column_name>fullname</column_name>
+        <stream_name>fullname</stream_name>
+      </field>
+      <field>
+        <column_name>country</column_name>
+        <stream_name>country</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_proposal</column_name>
+        <stream_name>id_dim_proposal</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_country_proposal</column_name>
+        <stream_name>id_dim_country_proposal</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_observation_band</column_name>
+        <stream_name>id_dim_observation_band</stream_name>
+      </field>
+      <field>
+        <column_name>id_dim_country_team</column_name>
+        <stream_name>id_dim_country_team</stream_name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>704</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>remove filds</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>investigators</name>
+      </field>
+      <field>
+        <name>reviewer1_score</name>
+      </field>
+      <field>
+        <name>id_dim_reviewer</name>
+        <rename>id_dim_reviewer1</rename>
+      </field>
+      <field>
+        <name>reviewer2_score</name>
+      </field>
+      <field>
+        <name>id_dim_reviewer_1</name>
+        <rename>id_dim_reviewer2</rename>
+      </field>
+      <field>
+        <name>reviewer3_score</name>
+      </field>
+      <field>
+        <name>id_dim_reviewer_2</name>
+        <rename>id_dim_reviewer3</rename>
+      </field>
+      <field>
+        <name>id_dim_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_country</name>
+      </field>
+      <field>
+        <name>id_dim_observation_band</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1152</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>remove filds 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>investigators</name>
+      </field>
+      <field>
+        <name>id_dim_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_country</name>
+      </field>
+      <field>
+        <name>id_dim_observation_band</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1152</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>remove filds 3</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_dim_proposal</name>
+      </field>
+      <field>
+        <name>id_dim_country</name>
+        <rename>id_dim_country_proposal</rename>
+      </field>
+      <field>
+        <name>id_dim_observation_band</name>
+      </field>
+      <field>
+        <name>pi_fullname</name>
+      </field>
+      <field>
+        <name>pi_country</name>
+      </field>
+      <field>
+        <name>tech_lead_fullname</name>
+      </field>
+      <field>
+        <name>tech_lead_country</name>
+      </field>
+      <field>
+        <name>co_pi_fullname</name>
+      </field>
+      <field>
+        <name>co_pi_country</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>640</xloc>
+      <yloc>384</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -979,7 +1958,8 @@
     </partitioning>
     <connection>datawarehouse</connection>
     <sql>select *
-  from stage_opencall so </sql>
+  from stage_opencall so 
+--where proposal_id = 'prop-041'</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -993,7 +1973,7 @@
         <name>proposal_id</name>
         <length>8</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>proposal_id</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1016,7 +1996,7 @@
         <name>proposal_title</name>
         <length>123</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>proposal_title</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1039,7 +2019,7 @@
         <name>country</name>
         <length>14</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>country</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1062,7 +2042,7 @@
         <name>investigators</name>
         <length>806</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>investigators</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1085,7 +2065,7 @@
         <name>observation_band</name>
         <length>6</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>observation_band</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1108,7 +2088,7 @@
         <name>total_hrs_requested</name>
         <length>7</length>
         <precision>2</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>total_hrs_requested</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1131,7 +2111,7 @@
         <name>reviewer1</name>
         <length>12</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>reviewer1</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1154,7 +2134,7 @@
         <name>reviewer1_score</name>
         <length>4</length>
         <precision>1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>reviewer1_score</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1177,7 +2157,7 @@
         <name>reviewer2</name>
         <length>12</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>reviewer2</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1200,7 +2180,7 @@
         <name>reviewer2_score</name>
         <length>4</length>
         <precision>1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>reviewer2_score</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1223,7 +2203,7 @@
         <name>reviewer3</name>
         <length>12</length>
         <precision>-1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>reviewer3</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
@@ -1246,7 +2226,7 @@
         <name>reviewer3_score</name>
         <length>4</length>
         <precision>1</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>reviewer3_score</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1269,7 +2249,7 @@
         <name>total_hrs_recommended</name>
         <length>7</length>
         <precision>2</precision>
-        <origin>Table input</origin>
+        <origin>source stage_opencall</origin>
         <comments>total_hrs_recommended</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -1302,7 +2282,7 @@
     </GUI>
   </step>
   <step>
-    <name>String operations</name>
+    <name>String operations 2</name>
     <type>StringOperations</type>
     <description/>
     <distribute>Y</distribute>
@@ -1314,22 +2294,9 @@
     </partitioning>
     <fields>
       <field>
-        <in_stream_name>proposal_id</in_stream_name>
+        <in_stream_name>fullname</in_stream_name>
         <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>proposal_title</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
+        <trim_type>none</trim_type>
         <lower_upper>upper</lower_upper>
         <padding_type>none</padding_type>
         <pad_char/>
@@ -1342,80 +2309,15 @@
       <field>
         <in_stream_name>country</in_stream_name>
         <out_stream_name/>
-        <trim_type>both</trim_type>
+        <trim_type/>
         <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
+        <padding_type/>
         <pad_char/>
         <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>investigators</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>observation_band</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>reviewer1</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>reviewer2</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-      <field>
-        <in_stream_name>reviewer3</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>N</init_cap>
-        <mask_xml>None</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
+        <init_cap/>
+        <mask_xml/>
+        <digits/>
+        <remove_special_characters/>
       </field>
     </fields>
     <attributes/>
@@ -1427,8 +2329,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>320</xloc>
-      <yloc>48</yloc>
+      <xloc>160</xloc>
+      <yloc>560</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

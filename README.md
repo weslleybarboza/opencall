@@ -1,14 +1,16 @@
 # opencall
 Opencall repo
 
-Managemnt of configuration
+Data warehouse
+- Developed using PDI 9.1
+- Star schema
+- Postgres (docker)
 
-Endpoint: opencallcase.postgres.database.azure.com
-Credencias: opencallonlyread@opencallcase / onlyread!@ (onlyread)
-Credencias: opencall@opencallcase / Bi*******1a (admin)
-Data base: postgres
+Report
+- 3 report using PRD
+- 1 report using Power BI
 
-Enviroument
+Chalenges
+- to get the best model data
+- work with PRD
 
-- Pentaho Data Integration 9.1
-Here we can use JNDI conection.
